@@ -1,0 +1,112 @@
+body {
+    color: #333;
+    font-size: 1.1em;
+    line-height: 1.5;
+    width: 40%;
+    display: flex;
+    flex-flow: column;
+    margin: auto;
+    font-family: 'Source Sans Pro', sans-serif;
+}
+
+header {
+    display: flex;
+    flex-flow: row wrap;
+    padding: 20px 0;
+    border-bottom: 2px solid #ccc;
+}
+
+#logo {
+    flex: 1;
+    margin-right: 30px;
+}
+
+div#logo a {
+    color: #333;
+    font-size: 1.2em;
+    text-decoration: none;
+}
+
+header nav {
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: flex-start;
+    flex: 0 1 auto;
+}
+
+header nav a {
+    display: inline-block;
+    color: #333;
+    font-size: 1.2em;
+    text-decoration: none;
+    flex: 0 0 auto;
+    margin: 0 5px;
+}
+
+header nav a:last-child {
+    margin-right: 0;
+}
+
+header nav a:first-child {
+    margin-left: 0;
+}
+
+header nav a:focus {
+    outline: 0;
+}
+
+footer {
+    border-top: solid 2px #ccc;
+    padding: 20px 0;
+    margin-top: 20px;
+    color: #555;
+    font-size: 0.8em;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+footer .credits {
+    text-align: right;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+footer .social {
+    text-align: left;
+    flex: 1;
+}
+
+footer .social a {
+    padding: 0 8px;
+    color: #333;
+}
+
+footer .social a:first-child {
+    padding: 0;
+}
+
+h1 {
+    font-size: 1.4em;
+    font-weight: 400;
+    color: #111;
+}
+
+h2 {
+    font-size: 1em;
+    font-weight: 400;
+    color: #222;
+}
+
+div.info {
+    color: #555;
+    font-size: 14px;
+}
+
+div.sourceCode {
+	background-color:#fafafa;
+	border:1px solid #c8c8c8;
+	padding-left: 10px;
+	padding-right: 10px
+}
