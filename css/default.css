@@ -104,9 +104,14 @@ div.info {
     font-size: 14px;
 }
 
+code {
+    font-size: 1.3em;
+}
+
 div.sourceCode {
 	background-color:#fafafa;
 	border:1px solid #c8c8c8;
 	padding-left: 10px;
-	padding-right: 10px
+	padding-right: 10px;
+    overflow: auto;
 }
