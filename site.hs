@@ -15,7 +15,7 @@ main =
      match "css/*" $
        do route idRoute
           compile compressCssCompiler
-     match (fromList ["about.md","contact.markdown"]) $
+     match (fromList ["about.md","contact.md"]) $
        do route $ setExtension "html"
           compile $
             pandocCompiler >>=
@@ -75,7 +75,7 @@ postCtx =
 myFeedConfiguration :: FeedConfiguration
 myFeedConfiguration = FeedConfiguration
     { feedTitle       = "purelyfunctional.org"
-    , feedDescription = "Functional programming and formal verification"
+    , feedDescription = "Functional programming and formal methods"
     , feedAuthorName  = "Moritz Kiefer"
     , feedAuthorEmail = "moritz.kiefer@purelyfunctional.org"
     , feedRoot        = "http://purelyfunctional.org"
