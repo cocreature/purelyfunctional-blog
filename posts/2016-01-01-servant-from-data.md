@@ -111,8 +111,8 @@ For that, we need to do induction on type level lists, so it’s nice to
 have a base case, which we’ll call `Fail` for `:<|>`, that always fails.
 This base case or identity gives us some sort of
 monoid structure with `:<|>` being a type level `mappend` and `Fail`
-being `mempty`. Note that `:<|>` not strictly associative since `(a :<|>
-b) :<|> c` is a different type than `a :<|> (b :<|> c)` but that
+being `mempty`. Note that `:<|>` is not strictly associative since `(a :<|>
+b) :<|> c` is a different type than `a :<|> (b :<|> c)`, but that
 doesn’t make a difference in our case.
 
 ```haskell
@@ -125,10 +125,10 @@ instance HasServer Fail where
   route _ _ _ f = f (failWith NotFound)
 ```
 
-There is nothing that interesting going on, just note that the thing
-we have to fill in for `Fail` on the type level is `Fail` on the value level.
-Equipped with the identity for `:<|>` let’s move on.
-Given a command as a symbol we just use a type synonym to create a
+There is nothing that interesting going on, just note that we have to
+fill in `Fail` on the value level for `Fail` on the type level.
+Equipped with the identity for `:<|>`, we may move on.
+Given a command as a symbol, we just use a type synonym to create a
 route for it
 
 ```haskell
@@ -137,7 +137,7 @@ type CommandRoute cmd = cmd :> ReqBody '[JSON] ParamMap :>
 ```
 
 So what do we do if we have a list of command names? On the value
-level that’s easy, just create a function and recurse on the
+level, we just create a function and recurse on the
 list. Luckily we have functions on the type level called
 `TypeFamilies` so let’s use that:
 
@@ -148,16 +148,16 @@ type family CommandRoutes list where
                                 CommandRoutes cmds
 ```
 
-Now that we can route a list of commands let’s think about how the
-schema for a plugin. Let’s assume we already have the route for all
-the commands. Then it’s simply a case of prepending the plugin name:
+Now that we can route a list of commands, we’ll think about how the
+schema for a plugin should look. Let’s assume we already have the route for all
+the commands. Now it’s simply a case of prepending the plugin name:
 
 ```haskell
 type PluginRoute plugin cmdRoutes = plugin :> cmdRoutes
 ```
 
 So finally let’s convert a list of `PluginType`s to a servant
-schema. We already have all the building blocks so it’s fairly easy:
+schema. We already have all the building blocks, so it’s fairly easy:
 
 ```haskell
 type family PluginRoutes list where
@@ -225,8 +225,8 @@ there might be a lot of code that uses it and shoving around stuff
 with complicated types is often not trivial, e.g. you need to hide
 arguments in an existential to put it in a map. It would be great if
 we could just tag our existing `Command` type with a `Symbol`. That’s
-exactly what `Const` is for. There is a small problem here, `Const` in
-GHC 7.10 is not polykinded so we can’t use a `Symbol` here (in GHC 8.0
+exactly what `Const` is for. There is a small problem here: `Const` in
+GHC 7.10 is not polykinded, so we can’t use a `Symbol` here (in GHC 8.0
 it will be polykinded). Luckily
 [vinyl](https://hackage.haskell.org/package/vinyl) provides a
 polykinded `Const` in `Data.Vinyl.Functor`. Let’s build a function to
@@ -241,13 +241,13 @@ buildCommand name response =
 ```
 
 We use the `KnownSymbol` type class to reflect the string back to the
-value level. The `Proxy` here is not actually needed but I found it
+value level. The `Proxy` here is not actually needed, but I found it
 more intuitive to specify the type in the arguments.
-Now we have a slight problem, we no longer have a list of `Commands`
+Now we have a slight problem: we no longer have a list of `Commands`
 but a list of `Vinyl.Const Command s` with the s being different for
-every `Command`. Since the standard haskell list is uniform we can’t
+every `Command`. Since the standard haskell list is uniform, we can’t
 use that anymore. Again Vinyl saves us by providing a
-[Rec type](https://hackage.haskell.org/package/vinyl-0.5.1/docs/Data-Vinyl-Core.html#t:Rec)
+[Rec type](https://hackage.haskell.org/package/vinyl-0.5.1/docs/Data-Vinyl-Core.html#t:Rec),
 which takes data that varies in the last type parameter and keeps
 track of those parameters in a type level list. Since we want to
 preserve the original representation we pull out the type of the
@@ -283,10 +283,10 @@ taggedPlugins = tag plugin1 Vinyl.:& tag plugin2
                             Vinyl.:& Vinyl.RNil
 ```
 
-The underscore represent the list of command names. You can either
-write them here manually or use `PartialTypeSignatures`to let GHC
+The underscores represent the list of command names. You can either
+write them here manually or use `PartialTypeSignatures` to let GHC
 infer them for you if you are lazy like me.
-Once we have this type we can use `Vinyl.recordToList` to get our
+Once we have this type, we can use `Vinyl.recordToList` to get our
 original value level representation:
 
 ```haskell
@@ -294,9 +294,9 @@ pluginList :: Plugins
 pluginList = M.fromList $ Vinyl.recordToList taggedPlugins
 ```
 
-So what should tag do? We’re going to do that in two steps, first we
-wrap it in another layer of `Const` this time adding the plugin
-name. Then we smash them together giving us a `PluginType` type parameter.
+So what should tag do? We’re going to define that in two steps: first we
+wrap it in another layer of `Const`, this time adding the plugin
+name. Then we smash them together, giving us a `PluginType` type parameter.
 
 ```haskell
 untagPlugin :: TaggedPlugin cmds -> UntaggedPlugin
@@ -345,11 +345,14 @@ servePlugins = serveAPI (recProxy taggedPlugins)
 
 ### Conclusion
 
-To profit from servant’s full potential you need to move as much
+To profit from servant’s full potential, you need to move as much
 information as possible into your API declaration. It might look like
 a fair amount of work, but considering you now get documentation &
-client bindings that might actually be useful I think it’s worth a
+client bindings that might actually be useful, I think it’s worth a
 trouble (also it’s a lot of fun :)).
 
 You can find the full code on
 [github](https://gist.github.com/cocreature/86702eae354f37f0ed8a).
+
+If you are interested, the PR adding this to `haskell-ide-engine` can
+be found [here](https://github.com/haskell/haskell-ide-engine/pull/152).
