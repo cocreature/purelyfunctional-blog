@@ -1,58 +1,42 @@
+html {
+    font-size: 18px;
+}
 body {
     color: #333;
-    font-size: 1.1em;
     line-height: 1.5;
-    width: 40%;
-    display: flex;
-    flex-flow: column;
+    width: 100%;
+    max-width: 1000px;
+    min-width: 520px;
     margin: auto;
-    font-family: 'Source Sans Pro', sans-serif;
+    position: relative;
+    font-family: 'Fira Sans';
+}
+
+body > * {
+    margin-left: 2.5rem;
+    margin-right: 2.5rem;
 }
 
 header {
-    display: flex;
-    flex-flow: row wrap;
-    padding: 20px 0;
+    margin-top: 1.5em;
+    padding-bottom: 0.5em;
+    font-size: 1.2em;
+    color: #333;
     border-bottom: 2px solid #ccc;
 }
 
-#logo {
-    flex: 1;
-    margin-right: 30px;
+header a {
+    color: #333;
 }
 
-div#logo a {
-    color: #333;
-    font-size: 1.2em;
+a {
     text-decoration: none;
 }
 
 header nav {
-    display: flex;
-    flex-flow: row wrap;
-    justify-content: flex-start;
-    flex: 0 1 auto;
-}
-
-header nav a {
-    display: inline-block;
-    color: #333;
-    font-size: 1.2em;
-    text-decoration: none;
-    flex: 0 0 auto;
-    margin: 0 5px;
-}
-
-header nav a:last-child {
-    margin-right: 0;
-}
-
-header nav a:first-child {
-    margin-left: 0;
-}
-
-header nav a:focus {
-    outline: 0;
+    position: absolute;
+    top: 0;
+    right: 2.5rem;
 }
 
 footer {
@@ -61,21 +45,14 @@ footer {
     margin-top: 20px;
     color: #555;
     font-size: 0.8em;
-    display: flex;
-    flex-flow: row wrap;
 }
 
 footer .credits {
     text-align: right;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    flex: 1;
 }
 
 footer .social {
     text-align: left;
-    flex: 1;
 }
 
 footer .social a {
@@ -105,7 +82,7 @@ div.info {
 }
 
 code {
-    font-size: 1.3em;
+    font-size: 15px;
 }
 
 div.sourceCode {
