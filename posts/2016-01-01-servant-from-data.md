@@ -75,14 +75,14 @@ server plugin command params =
 ```
 
 Nothing fancy going on here, we have a single route, which captures the
-plugin and the commandname and extracts a map of parameters from the
+plugin and the command name and extracts a map of parameters from the
 request body. We won’t use that map here. It’s just there to show how
 this can be extended to something useful. Once we have the names we
 just do a lookup returning the response if it was successful or a 404 otherwise.
 
 ### The problem
 
-Obviously the above approach works just fine but there is (at least)
+Obviously, the above approach works just fine but there is (at least)
 one problem: Even though we know all plugins and commands at compile
 time, we don’t tell servant about them. At a first glance this might
 not be so bad, but if you want to generate documentation or
@@ -156,7 +156,7 @@ the commands. Now it’s simply a case of prepending the plugin name:
 type PluginRoute plugin cmdRoutes = plugin :> cmdRoutes
 ```
 
-So finally let’s convert a list of `PluginType`s to a servant
+So finally, let’s convert a list of `PluginType`s to a servant
 schema. We already have all the building blocks, so it’s fairly easy:
 
 ```haskell
