@@ -1,11 +1,11 @@
 ----
-title: Deriving a servant schema from your data
+title: Deriving a Servant Schema from your Data
 ----
 
 This post assumes some level of familiarity with the “modern Haskell
 extension zoo” in particular `DataKinds`, `PolyKinds` and `TypeFamilies`.
 
-### Basic setup
+## Basic setup
 
 The scenario we are in is a bunch of static data that determines
 which routes are valid and which aren’t. I got the idea for this post
@@ -23,9 +23,7 @@ request. Let’s take a look at the types
 ```haskell
 data Command =
   Command {cmdName :: T.Text, response :: T.Text}
-
 data Plugin = Plugin { cmds :: [Command]}
-
 type Plugins = M.Map T.Text Plugin
 ```
 
@@ -53,10 +51,8 @@ Now we take a look at the corresponding servant schema and the handlers
 ```haskell
 type CommandName = T.Text
 type PluginName = T.Text
-
 type Param = T.Text
 type ParamMap = M.Map T.Text T.Text
-
 type API = Capture "plugin" PluginName :>
            Capture "command" CommandName :>
            ReqBody '[JSON] ParamMap :>
@@ -80,7 +76,7 @@ request body. We won’t use that map here. It’s just there to show how
 this can be extended to something useful. Once we have the names we
 just do a lookup returning the response if it was successful or a 404 otherwise.
 
-### The problem
+## The Problem
 
 Obviously, the above approach works just fine but there is (at least)
 one problem: Even though we know all plugins and commands at compile
@@ -93,7 +89,7 @@ it be great if we could teach servant about the existing plugins and
 commands and thereby profit a lot more from the cool documentation and
 binding generation servant provides?
 
-### Generating the schema
+## Generating the Schema
 
 Since the servant API is defined at the type level, we need to move the
 names to the type level too. Luckily GHC provides the `GHC.TypeLits`
@@ -119,9 +115,7 @@ doesn’t make a difference in our case.
 data Fail = Fail
 
 instance HasServer Fail where
-
   type ServerT Fail m = Fail
-
   route _ _ _ f = f (failWith NotFound)
 ```
 
@@ -166,7 +160,7 @@ type family PluginRoutes list where
   PluginRoutes '[] = Fail
 ```
 
-### Generating the servant handlers
+## Generating the Servant Handlers
 
 So now we know how to get to the servant schema, but we also need the
 handlers that deal with the commands. How can we get from a type level

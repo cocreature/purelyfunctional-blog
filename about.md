@@ -11,9 +11,7 @@ and formal verification. A bit of math here and there is also great.
 
 ## Get in touch
 
-You can find me on various social platforms using either *cocreature*
-or some variation of *Haskellfant* as a nickname.
+You can find me on various social platforms as *cocreature*.
 
 - [twitter](https://twitter.com/cocreature)
 - [github](https://github.com/cocreature)
-- [diaspora](https://pod.geraspora.de/u/javafant)

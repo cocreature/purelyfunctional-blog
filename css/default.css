@@ -1,20 +1,37 @@
-html {
-    font-size: 18px;
-}
-body {
-    color: #333;
-    line-height: 1.5;
+* {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    text-decoration: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    font-size: inherit;
     width: 100%;
-    max-width: 1000px;
-    min-width: 520px;
-    margin: auto;
+}
+html {
+    font-size: 20px;
+    font-weight: 300;
+}
+
+
+#doc {
     position: relative;
+    color: #222;
+    line-height: 1.6;
+    margin-top: 4rem;
+    margin-bottom: 6rem;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 1000px;
+    min-width: 420px;
     font-family: 'Fira Sans';
 }
 
 body > * {
-    margin-left: 2.5rem;
-    margin-right: 2.5rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: 40rem;
 }
 
 header {
@@ -22,7 +39,7 @@ header {
     padding-bottom: 0.5em;
     font-size: 1.2em;
     color: #333;
-    border-bottom: 2px solid #ccc;
+    border-bottom: 1px solid #ccc;
 }
 
 header a {
@@ -30,21 +47,35 @@ header a {
 }
 
 a {
-    text-decoration: none;
+    color:  #07a;
+    transition-duration: 0.1s;
+}
+
+a:hover {
+    transition-duration: 0.1s;
+    background: #f2f8fa;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+}
+
+header #logo {
+    width: auto;
 }
 
 header nav {
-    position: absolute;
-    top: 0;
-    right: 2.5rem;
+    width: auto;
 }
 
 footer {
-    border-top: solid 2px #ccc;
+    border-top: solid 1px #ccc;
     padding: 20px 0;
     margin-top: 20px;
     color: #555;
     font-size: 0.8em;
+    display: flex;
 }
 
 footer .credits {
@@ -52,43 +83,67 @@ footer .credits {
 }
 
 footer .social {
+    display: flex;
     text-align: left;
 }
 
 footer .social a {
-    padding: 0 8px;
+    padding-left: 8px;
     color: #333;
+    width: auto;
 }
 
 footer .social a:first-child {
-    padding: 0;
+    padding-left: 0;
 }
 
 h1 {
-    font-size: 1.4em;
+    font-variant: small-caps;
+    font-size: 24px;
     font-weight: 400;
-    color: #111;
 }
 
 h2 {
-    font-size: 1em;
-    font-weight: 400;
-    color: #222;
+    font-variant: small-caps;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+h3 {
+    font-variant: small-caps;
+    font-weight: 500;
 }
 
 div.info {
     color: #555;
     font-size: 14px;
+    margin-bottom: 1rem;
 }
 
 code {
-    font-size: 15px;
+    background: #fbfbfb;
 }
 
-div.sourceCode {
-	background-color:#fafafa;
-	border:1px solid #c8c8c8;
-	padding-left: 10px;
-	padding-right: 10px;
+code.sourceCode {
+    background: none;
+}
+
+pre {
+    font-family: 'Fira Mono';
+    background: #fbfbfb;
+    border-top: 1px solid #ddd;
+    padding: 0.5rem;
     overflow: auto;
+    margin-bottom: 1.5rem;
+    x-overflow: auto;
+    line-height: 1.2;
+    font-size: 18px;
+}
+
+p {
+    margin-bottom: 1rem;
+}
+
+ul.posts {
+    list-style: none;
 }

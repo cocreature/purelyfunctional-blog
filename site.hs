@@ -8,7 +8,7 @@ import Hakyll
 --------------------------------------------------------------------------------
 main :: IO ()
 main =
-  hakyll $
+  hakyllWith (defaultConfiguration {deployCommand = "rsync -av _site/ us:html"}) $
   do match "images/*" $
        do route idRoute
           compile copyFileCompiler
@@ -25,7 +25,8 @@ main =
        do route $ setExtension "html"
           compile $
             pandocCompilerWith defaultHakyllReaderOptions
-                               (defaultHakyllWriterOptions {writerHtml5 = True}) >>=
+                               (defaultHakyllWriterOptions {writerHtml5 = True})
+            >>=
             loadAndApplyTemplate "templates/post.html" postCtx >>=
             saveSnapshot "content" >>=
             loadAndApplyTemplate "templates/default.html" postCtx >>=
@@ -50,7 +51,6 @@ main =
                  recentFirst =<< loadAll "posts/*"
                let indexCtx =
                      listField "posts" postCtx (return posts) `mappend`
-                     constField "title" "Home" `mappend`
                      defaultContext
                getResourceBody >>= applyAsTemplate indexCtx >>=
                  loadAndApplyTemplate "templates/default.html" indexCtx >>=
