@@ -1,5 +1,6 @@
 html {
-    font-size: 20px;
+    background-color: #f9f7f3;
+    font-size: 18px;
     font-weight: normal;
     font-style: normal;
 }
@@ -19,9 +20,9 @@ html {
 
 #doc {
     position: relative;
-    color: #222;
+    color: rgb(47, 76, 84);
     line-height: 1.6;
-    margin-top: 4rem;
+    margin-top: 3rem;
     margin-bottom: 6rem;
     margin-left: auto;
     margin-right: auto;
@@ -38,11 +39,11 @@ body > * {
 }
 
 header {
-    margin-top: 1.5rem;
-    padding-bottom: 0.6rem;
+    margin-top: 1rem;
+    margin-bottom: 1.5rem;
     font-size: 1.2rem;
-    color: #333;
-    border-bottom: 1px solid #ccc;
+    /* color: #333; */
+    /* border-bottom: 1px solid #ccc; */
 }
 
 header a {
@@ -60,8 +61,8 @@ a:hover {
 }
 
 header {
-    display: flex;
-    justify-content: space-between;
+    /* display: flex; */
+    /* justify-content: space-between; */
 }
 
 header #logo {
@@ -69,7 +70,17 @@ header #logo {
 }
 
 header nav {
+    display: flex;
+    justify-content: space-between;
     width: auto;
+}
+
+header nav a {
+    text-align: center;
+    text-transform: uppercase;
+    font-family: 'Fira Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
 }
 
 footer {
@@ -100,11 +111,20 @@ footer .social a:first-child {
     padding-left: 0;
 }
 
+h1 {
+    font-size: 1rem;
+}
+
+h2, h3 {
+    font-size: 0.8rem;
+}
+
 h1, h2, h3 {
-    font-variant: small-caps;
-    font-size: 1.2rem;
+    color: rgb(173, 102, 43);
+    text-transform: uppercase;
     font-family: 'Fira Sans', sans-serif;
-    font-weight: 300;
+    font-weight: 600;
+    letter-spacing: 2px;
 }
 
 div.info {
@@ -136,6 +156,6 @@ p {
     margin-bottom: 1rem;
 }
 
-ul.posts {
+ul {
     list-style: none;
 }
