@@ -5,7 +5,7 @@ title: Deriving a Servant Schema from your Data
 This post assumes some level of familiarity with the “modern Haskell
 extension zoo” in particular `DataKinds`, `PolyKinds` and `TypeFamilies`.
 
-## Basic setup
+## Basic Setup
 
 The scenario we are in is a bunch of static data that determines
 which routes are valid and which aren’t. I got the idea for this post
@@ -212,7 +212,7 @@ cmdHandler plugin cmd reqVal =
     where cmd' = T.pack $ symbolVal cmd
 ```
 
-### Moving command and plugin names to the type level
+## Moving command and plugin names to the type level
 
 We want to preserve the data representation we have right now since
 there might be a lot of code that uses it and shoving around stuff
@@ -337,7 +337,7 @@ servePlugins :: IO ()
 servePlugins = serveAPI (recProxy taggedPlugins)
 ```
 
-### Conclusion
+## Conclusion
 
 To profit from servant’s full potential, you need to move as much
 information as possible into your API declaration. It might look like

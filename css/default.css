@@ -27,7 +27,7 @@ html {
     margin-right: auto;
     max-width: 1000px;
     min-width: 420px;
-    font-family: 'Fira Sans';
+    font-family: 'Lato', sans serif;
     text-rendering: optimizeLegibility;
 }
 
@@ -100,20 +100,11 @@ footer .social a:first-child {
     padding-left: 0;
 }
 
-h1 {
+h1, h2, h3 {
     font-variant: small-caps;
-    font-size: 1.3rem;
-}
-
-h2 {
-    font-variant: small-caps;
-    font-weight: 500;
-    margin-bottom: 0.5rem;
-}
-
-h3 {
-    font-variant: small-caps;
-    font-weight: 500;
+    font-size: 1.2rem;
+    font-family: 'Fira Sans', sans-serif;
+    font-weight: 300;
 }
 
 div.info {
@@ -137,7 +128,6 @@ pre {
     padding: 0.5rem;
     overflow: auto;
     margin-bottom: 1.5rem;
-    x-overflow: auto;
     line-height: 1.2;
     font-size: 0.9rem;
 }
