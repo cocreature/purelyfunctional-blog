@@ -3,7 +3,9 @@
   <head>
     <meta charset="utf-8">
     <title>purelyfunctional.org - $title$</title>
-    <link href="https://fonts.googleapis.com/css?family=Fira+Sans:300|Lato:400" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/css/materialize.min.css">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.98.2/js/materialize.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="/css/default.css" />
     <link rel="stylesheet" type="text/css" href="/css/syntax.css" />
@@ -11,21 +13,25 @@
   <body>
     <div id="doc">
       <header>
-        <nav>
-          <a href="/">home</a>
-          <a href="/about.html">about</a>
-          <a href="/contact.html">contact</a>
-          <a href="/archive.html">archive</a>
-          <a href="/atom.xml">feed</a>
+          <nav>
+              <div class="nav-wrapper">
+                  <ul id="nav-mobile" class="left">
+                      <li><a href="/">home</a></li>
+                      <li><a href="/about.html">about</a></li>
+                      <li><a href="/contact.html">contact</a></li>
+                      <li><a href="/archive.html">archive</a></li>
+                      <li><a href="/atom.xml">feed</a></li>
+                  </ul>
+              </div>
+          </nav>
         </nav>
       </header>
 
-      <div id="content">
-        <h1>$title$</h1>
-
+      <main>
+        <h2 class="header">$title$</h2>
         $body$
-      </div>
-      <footer>
+      </main>
+      <footer class="page-footer">
         <span class="social">
           <a href="https://github.com/cocreature">
             <i class="fa fa-github fa-lg"></i>
