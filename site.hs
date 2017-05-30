@@ -15,6 +15,9 @@ main =
     match "css/*" $ do
       route idRoute
       compile compressCssCompiler
+    match "js/*" $ do
+      route idRoute
+      compile getResourceString
     match (fromList ["about.md", "contact.md"]) $ do
       route $ setExtension "html"
       compile $
