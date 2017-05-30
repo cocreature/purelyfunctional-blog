@@ -5,7 +5,7 @@ title: Deriving a Servant Schema from your Data
 This post assumes some level of familiarity with the “modern Haskell
 extension zoo” in particular `DataKinds`, `PolyKinds` and `TypeFamilies`.
 
-## Basic Setup
+# Basic Setup
 
 The scenario we are in is a bunch of static data that determines
 which routes are valid and which aren’t. I got the idea for this post
@@ -76,7 +76,7 @@ request body. We won’t use that map here. It’s just there to show how
 this can be extended to something useful. Once we have the names we
 just do a lookup returning the response if it was successful or a 404 otherwise.
 
-## The Problem
+# The Problem
 
 Obviously, the above approach works just fine but there is (at least)
 one problem: Even though we know all plugins and commands at compile
@@ -89,7 +89,7 @@ it be great if we could teach servant about the existing plugins and
 commands and thereby profit a lot more from the cool documentation and
 binding generation servant provides?
 
-## Generating the Schema
+# Generating the Schema
 
 Since the servant API is defined at the type level, we need to move the
 names to the type level too. Luckily GHC provides the `GHC.TypeLits`
@@ -160,7 +160,7 @@ type family PluginRoutes list where
   PluginRoutes '[] = Fail
 ```
 
-## Generating the Servant Handlers
+# Generating the Servant Handlers
 
 So now we know how to get to the servant schema, but we also need the
 handlers that deal with the commands. How can we get from a type level
@@ -212,7 +212,7 @@ cmdHandler plugin cmd reqVal =
     where cmd' = T.pack $ symbolVal cmd
 ```
 
-## Moving command and plugin names to the type level
+# Moving command and plugin names to the type level
 
 We want to preserve the data representation we have right now since
 there might be a lot of code that uses it and shoving around stuff
@@ -337,7 +337,7 @@ servePlugins :: IO ()
 servePlugins = serveAPI (recProxy taggedPlugins)
 ```
 
-## Conclusion
+# Conclusion
 
 To profit from servant’s full potential, you need to move as much
 information as possible into your API declaration. It might look like

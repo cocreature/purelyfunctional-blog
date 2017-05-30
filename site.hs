@@ -1,11 +1,12 @@
---------------------------------------------------------------------------------
 {-# LANGUAGE OverloadedStrings #-}
 import Data.Monoid (mappend)
 import Text.Pandoc.Options
+import Text.Pandoc.Shared
 import Hakyll
 
+baseHeaderLevel :: Int
+baseHeaderLevel = 3
 
---------------------------------------------------------------------------------
 main :: IO ()
 main =
   hakyllWith (defaultConfiguration {deployCommand = "rsync -av _site/ us:html"}) $ do
@@ -27,25 +28,15 @@ main =
     match "posts/*" $ do
       route $ setExtension "html"
       compile $
-        pandocCompilerWith
+        pandocCompilerWithTransform
           defaultHakyllReaderOptions
           (defaultHakyllWriterOptions
-           {writerHtml5 = True, writerHighlight = False}) >>=
+           {writerHtml5 = True, writerHighlight = False})
+          (headerShift (baseHeaderLevel - 1)) >>=
         loadAndApplyTemplate "templates/post.html" postCtx >>=
         saveSnapshot "content" >>=
         loadAndApplyTemplate "templates/default.html" postCtx >>=
         relativizeUrls
-    create ["archive.html"] $ do
-      route idRoute
-      compile $ do
-        posts <- recentFirst =<< loadAll "posts/*"
-        let archiveCtx =
-              listField "posts" postCtx (return posts) `mappend`
-              constField "title" "Archives" `mappend`
-              defaultContext
-        makeItem "" >>= loadAndApplyTemplate "templates/archive.html" archiveCtx >>=
-          loadAndApplyTemplate "templates/default.html" archiveCtx >>=
-          relativizeUrls
     match "index.html" $ do
       route idRoute
       compile $ do
@@ -63,8 +54,6 @@ main =
         posts <- recentFirst =<< loadAllSnapshots "posts/*" "content"
         renderAtom myFeedConfiguration feedCtx posts
 
-
---------------------------------------------------------------------------------
 postCtx :: Context String
 postCtx =
     dateField "date" "%B %e, %Y" `mappend`
