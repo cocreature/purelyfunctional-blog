@@ -2,23 +2,25 @@
 title: Haskell bindings for template-heavy C++ code
 ---
 
-This post decribes a technique for writing Haskell bindings (similar
-tracks apply to other languages) to template-heavy C++ code when the
+This post describes a technique for writing Haskell bindings (similar
+tricks apply to other languages) to template-heavy C++ code when the
 template instantiations that should be exposed are not statically
-known. I am going to assume some rudamentary knowledge of C++
+known. I am going to assume some rudimentary knowledge of C++
 templates and the Haskell C FFI.
 
 I originally faced this problem when trying to make the bindings to
 ORC JIT in [llvm-hs](https://github.com/llvm-hs/llvm-hs) more
 flexible, so the examples used in this post will be based on the API
-of ORC JIT. The ORC JIT API is composed of various compile layers
-which are responsible for compiling LLVM modules to object files (The
-examples below call this method `compileModule`). There are base
-layers which just compile modules directly but more importantly (for
-this post), there are layers that wrap other layers and apply some
-sort of transformation before passing the modified module to the
-wrapped layer. Ignoring all the irrelevant details, we can imagine
-that the C++-API for this looks as follows:
+of ORC JIT. However, the solution is not tied to ORC JIT or LLVM and
+can be applied when writing bindings to other libraries. The ORC JIT
+API is composed of various compile layers which are responsible for
+compiling LLVM modules to object files (The examples below call the
+method responsible for this `compileModule`). There are base layers
+which just compile modules directly but more importantly (for this
+post), there are layers that wrap other layers and apply some sort of
+transformation before passing the modified module to the underlying
+layer. Ignoring all the irrelevant details, we can imagine that the
+C++-API for this looks as follows:
 
 ```language-cpp
 class Module;
@@ -85,12 +87,13 @@ wrappers for `newTransformLayer` for each type of base layers since
 this contradicts our goal of exposing the full flexibility present in
 the C++-API.
 
-Let’s step back for a moment. What’s causing problems here is the fact
-that C++ templates are a form of static polymorphism and we cannot
-expose that via the C API. However, we can expose dynamic
+Before explaining the solution, let’s step back for a moment and take
+a look at the situation at hand: What’s causing problems here is the
+fact that C++ templates are a form of static polymorphism and we
+cannot expose that via the C API. However, we can expose dynamic
 polymorphism, i.e., virtual dispatch. So if LLVM would just have a
 `CompileLayer` base class that `TransformLayer` and `BaseLayer`
-inherit from, all would be good. So since LLVM does not provide this
+inherit from, all would be fine. So since LLVM does not provide this
 base class, let’s just write it ourselves!
 
 ```language-cpp
@@ -100,9 +103,10 @@ class CompileLayer {
 };
 ```
 
-But `BaseLayer` and `TransformLayer` do not inherit this class. So we
-are going to create a new class that wraps an arbitrary compile layer
-and inherits from `CompileLayer`.
+But `BaseLayer` and `TransformLayer` do not inherit from this new
+class. So we are going to create a new class that wraps an arbitrary
+compile layer, inherits from `CompileLayer` and hands of the actual
+compilation to the wrapped layer.
 
 ```language-cpp
 template <typename T> class CompileLayerT : public CompileLayer {
@@ -116,7 +120,10 @@ template <typename T> class CompileLayerT : public CompileLayer {
 ```
 
 Now that we have the necessary machinery, we can write the
-non-polymorphic C wrappers which we will use via the Haskell C FFI.
+non-polymorphic C wrappers which we will use via the Haskell C
+FFI. These wrappers instantiate the templates only for
+`CompileLayer`. Since we can wrap the other layers in `CompileLayerT`
+and upcast them to `CompileLayer` we have not lost any flexibility.
 
 ```language-cpp
 extern "C" {
@@ -196,13 +203,13 @@ compileModule' layer module' =
 
 ### Caveats
 
-1. I’ve only shown constructors to this API. Usually you also want to
-   add destructors which free the allocated layers, otherwise you are
-   going to leak memory. Luckily you can mark the destructor of
-   `CompileLayer` as `virtual` and can then use the same C wrapper for
-   all layers.
+1. I’ve only shown constructors to this API. Usually, you also want to
+   add destructors which free the allocated layers. Otherwise, you are
+   never going to deallocate the memory which leads to a memory
+   leak. Luckily, you can mark the destructor of `CompileLayer` as
+   `virtual` and then use the same C wrapper for all layers.
   
-2. Turning static polymorphism into dynamic polymorphism does incurr a
+2. Turning static polymorphism into dynamic polymorphism does incur a
    slight performance cost. In this case, this is probably irrelevant
    but if you are wrapping a template function that wraps “small”
    types, e.g., a function that accepts different types of integers
