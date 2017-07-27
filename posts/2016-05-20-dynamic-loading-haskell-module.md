@@ -38,7 +38,7 @@ mangleSymbol pkg module' valsym =
 For the details of `prefixUnderscore` take a look at the
 [complete code](https://gist.github.com/cocreature/2e3ca5d921d08f8e0704b19b7dd186a6). `GHCi`
 also has a similar function called
-[`nameToCLabel`](https://downloads.haskell.org/~ghc/latest/docs/html/libraries/ghc/src/ByteCodeLink.html#nameToCLabel)
+[`nameToCLabel`](https://github.com/ghc/ghc/blob/791947db6db32ef7d4772a821a0823e558e3c05b/compiler/ghci/ByteCodeLink.hs#L163)
 which can probably be used if you have a `Name` instead of dumb
 strings.
 
