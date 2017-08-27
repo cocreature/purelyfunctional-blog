@@ -15,7 +15,7 @@ decided to give it another shot and finally managed to get it to work!
 
 Let us take the following module as an example:
 
-```language-haskell
+```haskell
 module Plugin(f) where
 f :: String
 f = "Monads are just monoids in the category of endofunctors, what’s the problem?"
@@ -27,7 +27,7 @@ also used in `plugins` and similar to the code used in `GHCi`. We
 first need a function to create the `ELF` symbol name in our
 executable from the package, module and `Haskell` symbol name.
 
-```language-haskell
+```haskell
 mangleSymbol :: Maybe String -> String -> String -> String
 mangleSymbol pkg module' valsym =
   prefixUnderscore ++
@@ -45,7 +45,7 @@ strings.
 To load our module we now only need to initialize the linker, load our
 object file and lookup the symbol of the corresponding name.
 
-```language-haskell
+```haskell
 main :: IO ()
 main =
   do initObjLinker
@@ -65,7 +65,7 @@ ensure that the symbol has the correct type.
 We can now compile the plugin module using `ghc plugin.hs` and our
 main module using `ghc -package ghc test.hs`. However if we run `./test` we get a cryptic error:
 
-```language-none
+```none
 test: plugin.o: unknown symbol `ghczmprim_GHCziCString_unpackCStringUtf8zh_closure'
 zsh: segmentation fault (core dumped)  ./test
 ```
@@ -83,7 +83,7 @@ before). The solution is to simply compile our executable using `ghc
 If we now run `test` we see the popular useful fact used to confuse
 beginners (please don’t do that):
 
-```language-none
+```none
 Monads are just monoids in the category of endofunctors, what’s the problem?
 ```
 

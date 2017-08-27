@@ -20,7 +20,7 @@ passing all additional parameters via a JSON object. Here a Command
 consists of a name and a response that we send back when we get a
 request. Let’s take a look at the types
 
-```language-haskell
+```haskell
 data Command =
   Command {cmdName :: T.Text, response :: T.Text}
 data Plugin = Plugin { cmds :: [Command]}
@@ -29,7 +29,7 @@ type Plugins = M.Map T.Text Plugin
 
 The static data (it’s important that it’s static) looks as follows
 
-```language-haskell
+```haskell
 plugin1 :: Plugin
 plugin1 =
   Plugin {cmds =
@@ -48,7 +48,7 @@ pluginList = M.fromList [("plugin1",plugin1),("plugin2",plugin2)]
 
 Now we take a look at the corresponding servant schema and the handlers
 
-```language-haskell
+```haskell
 type CommandName = T.Text
 type PluginName = T.Text
 type Param = T.Text
@@ -96,7 +96,7 @@ names to the type level too. Luckily GHC provides the `GHC.TypeLits`
 module for type level strings, and we can also reflect them back to the
 value level. So let’s make a type level representation of plugin
 
-```language-haskell
+```haskell
 data PluginText = PluginText Symbol [Symbol]
 ```
 
@@ -111,7 +111,7 @@ being `mempty`. Note that `:<|>` is not strictly associative since `(a :<|>
 b) :<|> c` is a different type than `a :<|> (b :<|> c)`, but that
 doesn’t make a difference in our case.
 
-```language-haskell
+```haskell
 data Fail = Fail
 
 instance HasServer Fail where
@@ -125,7 +125,7 @@ Equipped with the identity for `:<|>`, we may move on.
 Given a command as a symbol, we just use a type synonym to create a
 route for it
 
-```language-haskell
+```haskell
 type CommandRoute cmd = cmd :> ReqBody '[JSON] ParamMap :>
   Post '[JSON] T.Text
 ```
@@ -135,7 +135,7 @@ level, we just create a function and recurse on the
 list. Luckily we have functions on the type level called
 `TypeFamilies` so let’s use that:
 
-```language-haskell
+```haskell
 type family CommandRoutes list where
   CommandRoutes '[] = Fail
   CommandRoutes (cmd ': cmds) = CommandRoute cmd :<|>
@@ -146,14 +146,14 @@ Now that we can route a list of commands, we’ll think about how the
 schema for a plugin should look. Let’s assume we already have the route for all
 the commands. Now it’s simply a case of prepending the plugin name:
 
-```language-haskell
+```haskell
 type PluginRoute plugin cmdRoutes = plugin :> cmdRoutes
 ```
 
 So finally, let’s convert a list of `PluginType`s to a servant
 schema. We already have all the building blocks, so it’s fairly easy:
 
-```language-haskell
+```haskell
 type family PluginRoutes list where
   PluginRoutes ('PluginType name cmds ': xs)
      = (PluginRoute name (CommandRoutes cmds)) :<|> PluginRoutes xs
@@ -169,7 +169,7 @@ induction on the lists using (the value level) `Fail`
 as the base case and combining the cases using (the value level)
 `:<|>`:
 
-```language-haskell
+```haskell
 
 class HieServer (list :: [PluginType])  where
   hieServer
@@ -226,7 +226,7 @@ it will be polykinded). Luckily
 polykinded `Const` in `Data.Vinyl.Functor`. Let’s build a function to
 create a tagged command:
 
-```language-haskell
+```haskell
 buildCommand
   :: KnownSymbol s
   => Proxy s -> T.Text -> Vinyl.Const Command s
@@ -247,7 +247,7 @@ track of those parameters in a type level list. Since we want to
 preserve the original representation we pull out the type of the
 commands giving us
 
-```language-haskell
+```haskell
 data Plugin cmds = Plugin { cmds :: cmds }
 
 type UntaggedPlugin = Plugin [Command]
@@ -257,7 +257,7 @@ type TaggedPlugin cmds = Plugin (Vinyl.Rec (Vinyl.Const Command)
 
 We need to slightly change our data
 
-```language-haskell
+```haskell
 plugin1 :: TaggedPlugin '["cmd1.1","cmd1.2"]
 plugin1 = Plugin (buildCommand (Proxy :: Proxy "cmd1.1")
                                "cmd1.1 response"
@@ -269,7 +269,7 @@ plugin1 = Plugin (buildCommand (Proxy :: Proxy "cmd1.1")
 We still don’t have the plugin name.
 Let’s see where we want to go and work our way backwards from there:
 
-```language-haskell
+```haskell
 taggedPlugins :: Vinyl.Rec (Vinyl.Const (T.Text,UntaggedPlugin))
                  '[ 'PluginType "plugin1" _
                   , 'PluginType "plugin2" _]
@@ -283,7 +283,7 @@ infer them for you if you are lazy like me.
 Once we have this type, we can use `Vinyl.recordToList` to get our
 original value level representation:
 
-```language-haskell
+```haskell
 pluginList :: Plugins
 pluginList = M.fromList $ Vinyl.recordToList taggedPlugins
 ```
@@ -292,7 +292,7 @@ So what should tag do? We’re going to define that in two steps: first we
 wrap it in another layer of `Const`, this time adding the plugin
 name. Then we smash them together, giving us a `PluginType` type parameter.
 
-```language-haskell
+```haskell
 untagPlugin :: TaggedPlugin cmds -> UntaggedPlugin
 untagPlugin (Plugin cmds) = Plugin $ Vinyl.recordToList cmds
 
@@ -319,14 +319,14 @@ tag = retagPlugin . Vinyl.Const
 Hold tight we’re almost done! All that’s left is to throw away the
 data from the `Rec` type and make a `Proxy` out of it.
 
-```language-haskell
+```haskell
 recProxy :: Vinyl.Rec f t -> Proxy t
 recProxy _ = Proxy
 ```
 
 So finally we can serve our API
 
-```language-haskell
+```haskell
 serveAPI :: forall plugins.
             (HieServer plugins,HasServer (PluginRoutes plugins))
          => Proxy plugins -> IO ()

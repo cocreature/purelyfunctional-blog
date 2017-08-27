@@ -1,11 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
-import Data.Monoid (mappend)
-import Text.Pandoc.Options
-import Text.Pandoc.Shared
-import Hakyll
+import           Data.Monoid (mappend)
+import           Hakyll
+import qualified Data.Text as Text
+import           CMark
 
 baseHeaderLevel :: Int
 baseHeaderLevel = 3
+
+commonmarkCompiler :: Compiler (Item String)
+commonmarkCompiler =
+  fmap (fmap (Text.unpack . commonmarkToHtml [] . Text.pack)) getResourceBody
 
 main :: IO ()
 main =
@@ -28,11 +32,7 @@ main =
     match "posts/*" $ do
       route $ setExtension "html"
       compile $
-        pandocCompilerWithTransform
-          defaultHakyllReaderOptions
-          (defaultHakyllWriterOptions
-           {writerHtml5 = True, writerHighlight = False})
-          (headerShift (baseHeaderLevel - 1)) >>=
+        commonmarkCompiler >>=
         loadAndApplyTemplate "templates/post.html" postCtx >>=
         saveSnapshot "content" >>=
         loadAndApplyTemplate "templates/default.html" postCtx >>=

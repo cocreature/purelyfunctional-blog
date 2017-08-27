@@ -22,7 +22,7 @@ transformation before passing the modified module to the underlying
 layer. Ignoring all the irrelevant details, we can imagine that the
 C++-API for this looks as follows:
 
-```language-cpp
+```cpp
 class Module;
 class Object;
 
@@ -58,7 +58,7 @@ should be able to choose which layers they want to use and how they
 should be composed. A first attempt at the low-level API might look as
 follows:
 
-```language-haskell
+```haskell
 import Foreign.Ptr
 
 data Object
@@ -96,7 +96,7 @@ polymorphism, i.e., virtual dispatch. So if LLVM would just have a
 inherit from, all would be fine. So since LLVM does not provide this
 base class, let’s just write it ourselves!
 
-```language-cpp
+```cpp
 class CompileLayer {
   public:
     virtual Object *compileModule(Module *module) = 0;
@@ -108,7 +108,7 @@ class. So we are going to create a new class that wraps an arbitrary
 compile layer, inherits from `CompileLayer` and hands of the actual
 compilation to the wrapped layer.
 
-```language-cpp
+```cpp
 template <typename T> class CompileLayerT : public CompileLayer {
   public:
     CompileLayerT(T layer) : layer(std::move(layer)) {}
@@ -125,7 +125,7 @@ FFI. These wrappers instantiate the templates only for
 `CompileLayer`. Since we can wrap the other layers in `CompileLayerT`
 and upcast them to `CompileLayer` we have not lost any flexibility.
 
-```language-cpp
+```cpp
 extern "C" {
 CompileLayer *newBaseLayer() {
     return new CompileLayerT<BaseLayer>(BaseLayer());
@@ -144,7 +144,7 @@ Object *compileModule(CompileLayer *layer, Module *module) {
 Finally, we are ready to get back to the Haskell code. Writing the
  bindings to the 3 C functions that we just defined is easy.
 
-```language-haskell
+```haskell
 {-# LANGUAGE ForeignFunctionInterface #-}
 import Foreign.Ptr
 
@@ -169,7 +169,7 @@ for `BaseLayer` and `TransformLayer`. `TransformLayer` has a phantom
 type parameter representing the base layer and our wrapper for
 `newTransformLayer` ensures that it is correctly instantiated.
 
-```language-haskell
+```haskell
 foreign import ccall newBaseLayer ::
   IO (Ptr CompileLayer)
 foreign import ccall newTransformLayer ::
