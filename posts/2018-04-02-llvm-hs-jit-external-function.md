@@ -3,14 +3,14 @@ title: Calling External Functions from JIT-compiled LLVM Modules using llvm-hs
 ---
 
 `llvm-hs` provides bindings to LLVM’s ORC JIT APIs. These APIs let you
-JIT-compile LLVM modules and then call functions in that module from
+JIT-compile LLVM modules and then call functions in those modules from
 your Haskell code. However, sometimes you want to use external
 libraries from within your LLVM module either because you want to make
 use of an existing library or because it might be easier to implement
 certain parts in other languages (e.g. C) than LLVM IR. Sam Griffin recently
 [raised the question](https://github.com/llvm-hs/llvm-hs/issues/193)
 of how you can call functions in external libraries from a
-JIT-compiled module and while I had a rough idea of how to accomplish
+JIT-compiled module and while I had a rough idea of how to do
 this, I had never actually tried it myself. In this post, I
 present my findings on how you can accomplish this for both static and
 dynamic libraries.
@@ -96,10 +96,10 @@ load the module and create the ORC linking and compile layers.
 3. We can now add the module to the ORC compile layer using
 `withModule` which is a `bracket`-style wrapper around `addModule` and
 `removeModule`.
-4. Now we mangle the symbol of the function that we want to call (`f` in this case) and
+4. Next, we mangle the symbol of the function that we want to call (`f` in this case) and
 search for the symbol in the compile layer.
 5. Pattern matching on the resulting `JITSymbol` gives us back a
-`WordPtr` representing the address of the function. We use
+`WordPtr` representing the address of `f`. We use
 `wordPtrToPtr` and `castPtrToFunPtr` to convert the `WordPtr` to a
 `FunPtr`.
 6. Finally, we use a [dynamic foreign
@@ -135,7 +135,7 @@ library so that it is found at link time and the `LD_LIBRARY_PATH`
 environment variable to make sure it is found when you run the
 executable.
 
-If you want to use the static library then things are a bit more
+If you want to use the static library, then things are a bit more
 involved: Just adding `externalstatic` to `extra-libraries` will not
 work since the linker will omit unused symbols when linking against
 static libraries. Since the linker does not know about the reference to
@@ -149,11 +149,11 @@ symbols end up in the dynamic symbol table since that is what
 `getSymbolAddressInProcess` will look at. The corresponding flag in `GNU
 ld` is called `--export-dynamic` but we use GHC’s `-rdynamic` option
 here (by adding it to `ld-options`) which will use `--export-dynamic`
-under the hood if you’re using GNU ld (but should at least in theory
-also support other linkers). As for shared libraries, you might also
+under the hood if you’re using GNU ld (but should also support other linkers).
+As for shared libraries, you might also
 need to set `extra-lib-dirs` to make sure that the library is found at
 link time. Since we are linking the library statically, there is no
-need for messing with `LD_LIBRARY_PATH`. If you followed the steps,
+need for messing with `LD_LIBRARY_PATH`. If you followed the steps thus far,
 you might have noticed that this still does not quite work: You know
 longer get symbol resolution errors but you will get a segfault.
 Luckily, this can be fixed by changing the relocation model of the
