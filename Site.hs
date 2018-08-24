@@ -17,6 +17,9 @@ main =
     match "images/*" $ do
       route idRoute
       compile copyFileCompiler
+    match "slides/*" $ do
+      route idRoute
+      compile copyFileCompiler
     match "css/*" $ do
       route idRoute
       compile compressCssCompiler
@@ -37,12 +40,21 @@ main =
         saveSnapshot "content" >>=
         loadAndApplyTemplate "templates/default.html" postCtx >>=
         relativizeUrls
+    match "talks/*" $ do
+      compile $
+        commonmarkCompiler >>=
+        saveSnapshot "content"
     match "index.html" $ do
       route idRoute
       compile $ do
         posts <- recentFirst =<< loadAll "posts/*"
+        talks <- recentFirst =<< loadAllSnapshots "talks/*" "content"
         let indexCtx =
-              listField "posts" postCtx (return posts) `mappend` defaultContext
+              mconcat
+                [ listField "posts" postCtx (return posts)
+                , listField "talks" talkCtx (return talks)
+                , defaultContext
+                ]
         getResourceBody >>= applyAsTemplate indexCtx >>=
           loadAndApplyTemplate "templates/default.html" indexCtx >>=
           relativizeUrls
@@ -56,6 +68,11 @@ main =
 
 postCtx :: Context String
 postCtx =
+    dateField "date" "%B %e, %Y" `mappend`
+    defaultContext
+
+talkCtx :: Context String
+talkCtx =
     dateField "date" "%B %e, %Y" `mappend`
     defaultContext
 
